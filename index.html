@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Biblioteca de Materiais — SafeSeg</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --graphite:#14171B;
+    --graphite-soft:#20242B;
+    --amber:#F59E0B;
+    --amber-dark:#C97A06;
+    --bg:#FAFAF8;
+    --card:#FFFFFF;
+    --line:#E7E5E0;
+    --text:#1F2328;
+    --muted:#6B7280;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--text);
+    font-family:'Inter',sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  header{
+    background:var(--graphite);
+    color:#fff;
+    padding:22px 20px 20px;
+  }
+  .brand{
+    display:flex;
+    align-items:center;
+    gap:10px;
+  }
+  .brand-mark{
+    width:34px;height:34px;border-radius:8px;
+    background:var(--amber);
+    display:flex;align-items:center;justify-content:center;
+    font-family:'Bebas Neue',sans-serif;
+    color:var(--graphite);
+    font-size:18px;
+    flex-shrink:0;
+  }
+  .brand-name{
+    font-family:'Bebas Neue',sans-serif;
+    letter-spacing:0.5px;
+    font-size:19px;
+    line-height:1;
+  }
+  .brand-sub{
+    font-size:11.5px;
+    color:#B9BEC7;
+    margin-top:2px;
+  }
+  .course-title{
+    font-family:'Bebas Neue',sans-serif;
+    font-size:34px;
+    letter-spacing:0.3px;
+    margin:18px 0 2px;
+    line-height:1.05;
+  }
+  .course-hint{
+    color:#B9BEC7;
+    font-size:13.5px;
+  }
+  main{
+    max-width:640px;
+    margin:0 auto;
+    padding:18px 16px 60px;
+  }
+
+  /* ---------- estado: carregando / erro / vazio ---------- */
+  .state-box{
+    text-align:center;
+    padding:60px 20px;
+    color:var(--muted);
+  }
+  .state-box .icon{
+    font-size:34px;
+    margin-bottom:10px;
+    display:block;
+  }
+  .state-title{
+    font-weight:600;
+    color:var(--text);
+    margin-bottom:4px;
+    font-size:15.5px;
+  }
+
+  /* ---------- abas de categoria ---------- */
+  .tabs{
+    display:flex;
+    gap:8px;
+    overflow-x:auto;
+    padding:16px 0 4px;
+    -ms-overflow-style:none;
+    scrollbar-width:none;
+  }
+  .tabs::-webkit-scrollbar{display:none;}
+  .tab{
+    flex-shrink:0;
+    padding:9px 16px;
+    border-radius:999px;
+    border:1px solid var(--line);
+    background:var(--card);
+    font-size:13.5px;
+    font-weight:600;
+    color:var(--muted);
+    cursor:pointer;
+    white-space:nowrap;
+  }
+  .tab.active{
+    background:var(--graphite);
+    border-color:var(--graphite);
+    color:#fff;
+  }
+
+  /* ---------- lista de arquivos ---------- */
+  .arquivo{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:12px;
+    padding:13px 14px;
+    margin-bottom:10px;
+    text-decoration:none;
+    color:var(--text);
+  }
+  .arquivo-icon{
+    width:38px;height:38px;
+    border-radius:9px;
+    flex-shrink:0;
+    display:flex;align-items:center;justify-content:center;
+    font-size:17px;
+    background:#FDF3E1;
+    color:var(--amber-dark);
+  }
+  .arquivo-icon.video{background:#E9F1FF;color:#2563EB;}
+  .arquivo-icon.pdf{background:#FDECEC;color:#DC2626;}
+  .arquivo-icon.imagem{background:#EAF7EE;color:#16A34A;}
+  .arquivo-info{flex:1;min-width:0;}
+  .arquivo-nome{
+    font-weight:600;
+    font-size:14.5px;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+  }
+  .arquivo-meta{
+    font-size:12px;
+    color:var(--muted);
+    margin-top:1px;
+  }
+  .arquivo-abrir{
+    flex-shrink:0;
+    font-size:13px;
+    font-weight:600;
+    color:var(--amber-dark);
+  }
+
+  footer{
+    text-align:center;
+    color:var(--muted);
+    font-size:12px;
+    padding:20px;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="brand">
+    <div class="brand-mark">S</div>
+    <div>
+      <div class="brand-name">SAFESEG</div>
+      <div class="brand-sub">Biblioteca de Materiais</div>
+    </div>
+  </div>
+  <div id="headerCourseArea"></div>
+</header>
+
+<main id="main">
+  <div class="state-box">
+    <span class="icon">⏳</span>
+    <div class="state-title">Carregando...</div>
+  </div>
+</main>
+
+<footer>SafeSeg Segurança do Trabalho — materiais de apoio para revisão</footer>
+
+<script>
+/* -----------------------------------------------------------------
+   Cole aqui a URL do Apps Script publicado (termina em /exec)
+------------------------------------------------------------------*/
+const API_URL = "COLE_AQUI_A_URL_DO_APPS_SCRIPT";
+
+const main = document.getElementById("main");
+const headerCourseArea = document.getElementById("headerCourseArea");
+
+const ICONES = {
+  pdf: "📕", video: "🎬", imagem: "🖼️", slides: "📊",
+  documento: "📄", planilha: "📈", arquivo: "📁"
+};
+
+function estado(icon, titulo, texto) {
+  main.innerHTML = `
+    <div class="state-box">
+      <span class="icon">${icon}</span>
+      <div class="state-title">${titulo}</div>
+      <div>${texto || ""}</div>
+    </div>`;
+}
+
+async function iniciar() {
+  const params = new URLSearchParams(window.location.search);
+  const cursoId = params.get("curso");
+
+  if (!API_URL || API_URL.indexOf("COLE_AQUI") !== -1) {
+    estado("⚠️", "Site ainda não configurado", "Falta colar a URL do Apps Script no index.html.");
+    return;
+  }
+
+  // Este site não tem catálogo público — cada aluno só acessa pelo link
+  // (QR Code) exato da própria turma, para isolar o material entre cursos.
+  if (!cursoId) {
+    estado("📷", "Escaneie o QR Code do seu curso", "O material fica disponível pelo cartão que você recebeu em sala.");
+    return;
+  }
+
+  try {
+    const url = `${API_URL}?curso=${encodeURIComponent(cursoId)}`;
+    const resp = await fetch(url);
+    const dados = await resp.json();
+
+    if (dados.erro) {
+      estado("🔍", "Curso não encontrado", "Confira o QR Code ou fale com a SafeSeg.");
+      return;
+    }
+
+    renderCurso(dados);
+  } catch (e) {
+    estado("⚠️", "Não foi possível carregar", "Verifique sua conexão e tente novamente.");
+  }
+}
+
+function renderCurso(dados) {
+  headerCourseArea.innerHTML = `
+    <div class="course-title">${dados.curso}</div>
+    <div class="course-hint">Materiais para revisão do curso</div>
+  `;
+
+  const categorias = dados.categorias || [];
+  if (categorias.length === 0) {
+    estado("📁", "Nenhum material adicionado ainda", "Volte em breve.");
+    return;
+  }
+
+  const tabsHtml = categorias.map((cat, i) =>
+    `<div class="tab ${i === 0 ? "active" : ""}" data-index="${i}">${cat.nome}</div>`
+  ).join("");
+
+  main.innerHTML = `
+    <div class="tabs">${tabsHtml}</div>
+    <div id="listaArquivos"></div>
+  `;
+
+  const lista = document.getElementById("listaArquivos");
+  const tabs = main.querySelectorAll(".tab");
+
+  function mostrarCategoria(index) {
+    tabs.forEach((t, i) => t.classList.toggle("active", i === index));
+    const cat = categorias[index];
+    if (cat.arquivos.length === 0) {
+      lista.innerHTML = `
+        <div class="state-box" style="padding:40px 20px;">
+          <span class="icon">📭</span>
+          <div class="state-title">Nada em ${cat.nome} ainda</div>
+        </div>`;
+      return;
+    }
+    lista.innerHTML = cat.arquivos.map(a => `
+      <a class="arquivo" href="${a.url}" target="_blank" rel="noopener">
+        <div class="arquivo-icon ${a.tipo}">${ICONES[a.tipo] || ICONES.arquivo}</div>
+        <div class="arquivo-info">
+          <div class="arquivo-nome">${a.nome}</div>
+          <div class="arquivo-meta">${a.tamanho}${a.tamanho ? " · " : ""}${a.modificado}</div>
+        </div>
+        <div class="arquivo-abrir">Abrir</div>
+      </a>
+    `).join("");
+  }
+
+  tabs.forEach(tab => {
+    tab.addEventListener("click", () => mostrarCategoria(Number(tab.dataset.index)));
+  });
+
+  mostrarCategoria(0);
+}
+
+iniciar();
+</script>
+
+</body>
+</html>
