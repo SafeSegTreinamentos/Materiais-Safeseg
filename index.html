@@ -221,7 +221,7 @@ async function iniciar() {
   const params = new URLSearchParams(window.location.search);
   const cursoId = params.get("curso");
 
-  if (!API_URL || API_URL.indexOf("https://script.google.com/macros/s/AKfycbyAm0LoUU8laNxCZcCM2Pq6nLxLt9Xvi0ZaOZi25aIEpMdMuk2D_B4_6jnDA6Fyx_Z5/exec") !== -1) {
+  if (!API_URL || !API_URL.startsWith("https://script.google.com/macros/")) {
     estado("⚠️", "Site ainda não configurado", "Falta colar a URL do Apps Script no index.html.");
     return;
   }
